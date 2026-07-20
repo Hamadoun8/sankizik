@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SankiZik : La musique africaine, achetée et écoutée ici</title>
+<meta name="description" content="SankiZik : achetez les albums et les sons de vos artistes, écoutez-les directement sur la plateforme, sur téléphone comme sur ordinateur.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%230D0A1A'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23FF6B4A' stroke-width='8'/><circle cx='50' cy='50' r='8' fill='%23FFB84D'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ SANKIZIK : Nuit sur le Niger ============ */
+:root{
+  --bg0:#0D0A1A;         /* nuit profonde */
+  --bg1:#16112B;         /* surface carte */
+  --bg2:#221A48;         /* surface relevée */
+  --line:rgba(245,239,228,.09);
+  --txt:#F5EFE4;         /* sable clair */
+  --txt2:#A29BC4;        /* lavande grise */
+  --c1:#FF6B4A;          /* braise */
+  --c2:#FFB84D;          /* or ambre */
+  --c3:#8B5CF6;          /* violet electrique */
+  --ok:#34D399; --warn:#FBBF24; --err:#F87171;
+  --grad:linear-gradient(135deg,var(--c1),var(--c2));
+  --r:18px; --r2:12px;
+  --shadow:0 12px 40px rgba(0,0,0,.45);
+  --player-h:0px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg0);
+  color:var(--txt);
+  font-family:'Sora',system-ui,sans-serif;
+  font-size:15.5px;line-height:1.6;
+  min-height:100vh;
+  padding-bottom:calc(var(--player-h) + env(safe-area-inset-bottom));
+}
+img{display:block;max-width:100%}
+a{color:var(--c2);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{
+  font-family:inherit;font-size:15px;color:var(--txt);
+  background:var(--bg0);border:1.5px solid var(--line);
+  border-radius:var(--r2);padding:11px 14px;width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--c1)}
+label{display:block;font-size:13px;font-weight:600;color:var(--txt2);margin:14px 0 6px}
+:focus-visible{outline:2px solid var(--c2);outline-offset:2px}
+::placeholder{color:#6B6489}
+h1,h2,h3{font-family:'Unbounded',sans-serif;line-height:1.2}
+.section-t{font-size:clamp(19px,3vw,26px);font-weight:700;margin:38px 0 18px;display:flex;align-items:center;gap:12px}
+.section-t::after{content:"";flex:1;height:1px;background:var(--line)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+.muted{color:var(--txt2);font-size:13.5px}
+
+/* ---------- Header ---------- */
+header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(13,10,26,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.head-in{max-width:1180px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-family:'Unbounded';font-weight:900;font-size:21px;letter-spacing:-.5px;display:flex;align-items:center;gap:9px;color:var(--txt)}
+.logo .disc{width:26px;height:26px;border-radius:50%;background:conic-gradient(var(--c1),var(--c2),var(--c3),var(--c1));position:relative;flex:0 0 auto}
+.logo .disc::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--bg0)}
+.logo em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{
+  color:var(--txt2);font-size:14px;font-weight:600;white-space:nowrap;
+  padding:8px 13px;border-radius:99px;transition:.18s;
+}
+nav a:hover{color:var(--txt)}
+nav a.on{color:var(--bg0);background:var(--grad)}
+nav a .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--err);margin-left:5px;vertical-align:middle}
+@media(max-width:760px){
+  .head-in{padding:10px 14px}
+  nav{margin-left:0;width:100%;order:3}
+}
+
+/* ---------- Boutons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-weight:700;font-size:14.5px;border-radius:99px;padding:12px 22px;
+  transition:.18s;white-space:nowrap;
+}
+.btn-p{background:var(--grad);color:#1A0D06}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,107,74,.35)}
+.btn-g{border:1.5px solid var(--line);color:var(--txt)}
+.btn-g:hover{border-color:var(--c2);color:var(--c2)}
+.btn-s{font-size:13px;padding:8px 15px}
+.btn-danger{border:1.5px solid var(--err);color:var(--err)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-block{width:100%}
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative;overflow:hidden;
+  padding:56px 0 46px;
+  background:
+    radial-gradient(900px 420px at 85% -10%, rgba(139,92,246,.22), transparent 60%),
+    radial-gradient(700px 380px at 0% 110%, rgba(255,107,74,.16), transparent 60%);
+}
+.hero::before{
+  content:"";position:absolute;inset:0;opacity:.05;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='none' stroke='%23FFB84D' stroke-width='2'%3E%3Cpath d='M0 21 21 0 42 21 21 42Z M42 21 63 0 84 21 63 42Z M0 63 21 42 42 63 21 84Z M42 63 63 42 84 63 63 84Z'/%3E%3Ccircle cx='21' cy='21' r='4'/%3E%3Ccircle cx='63' cy='63' r='4'/%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-in{position:relative;max-width:1180px;margin:0 auto;padding:0 18px;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(27px,4.6vw,46px);font-weight:900;letter-spacing:-1px}
+.hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--txt2);margin:16px 0 24px;max-width:520px}
+.hero-search{display:flex;gap:10px;max-width:520px}
+.hero-search input{flex:1;background:var(--bg1);border-radius:99px;padding:13px 20px}
+.hero-visu{position:relative;display:flex;justify-content:center;align-items:center}
+.hero-photo{
+  width:min(330px,72vw);aspect-ratio:4/5;border-radius:26px;overflow:hidden;position:relative;
+  box-shadow:var(--shadow);transform:rotate(2.5deg);border:1px solid var(--line);
+}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-photo::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(205deg, rgba(139,92,246,.30), transparent 42%, rgba(13,10,26,.55));
+}
+.hero-visu .vinyl{position:absolute;left:-6%;bottom:-5%;width:min(210px,46vw)}
+.hero-stats{display:flex;gap:30px;margin-top:20px;flex-wrap:wrap}
+.hero-stats b{font-family:'Unbounded';font-size:22px;display:block;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-stats span{font-size:12.5px;color:var(--txt2)}
+.vinyl{
+  width:min(300px,70vw);aspect-ratio:1;border-radius:50%;position:relative;
+  background:
+    radial-gradient(circle at 50% 50%, #0A0814 29%, transparent 30%),
+    repeating-radial-gradient(circle at 50% 50%, #191430 0 2px, #100C22 2px 4px);
+  box-shadow:var(--shadow), 0 0 0 1px var(--line);
+  animation:spin 14s linear infinite;
+}
+.vinyl .center{
+  position:absolute;inset:31%;border-radius:50%;overflow:hidden;
+  background:var(--grad);display:flex;align-items:center;justify-content:center;
+}
+.vinyl .center img{width:100%;height:100%;object-fit:cover}
+.vinyl::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:var(--bg0);box-shadow:0 0 0 3px rgba(245,239,228,.2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:840px){
+  .hero{padding:36px 0 30px}
+  .hero-in{grid-template-columns:1fr;gap:26px}
+  .hero-visu{order:-1;margin-bottom:10px}
+  .hero-photo{width:min(240px,62vw)}
+  .hero-visu .vinyl{width:min(150px,38vw);left:0}
+}
+
+/* ---------- Categories ---------- */
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+@media(max-width:560px){.cats{grid-template-columns:repeat(2,1fr);gap:11px}}
+.cat{
+  border-radius:18px;padding:24px 14px;text-align:center;cursor:pointer;transition:.18s;
+  display:flex;flex-direction:column;gap:7px;align-items:center;font-weight:800;font-size:14.5px;
+}
+.cat .ic{font-size:27px;line-height:1}
+.cat small{font-weight:600;font-size:11.5px;opacity:.78}
+.cat:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.cat.c1{background:linear-gradient(135deg,#FFD37A,#FF9A3D);color:#2B1400}
+.cat.c2{background:linear-gradient(135deg,#FF8A6B,#FF3D6E);color:#2E040F}
+.cat.c3{background:linear-gradient(135deg,#C4B5FD,#7C4DF3);color:#160A33}
+.cat.c4{background:linear-gradient(135deg,#5EEAD4,#0EA5E9);color:#03202B}
+.cat.c5{background:linear-gradient(135deg,#F9A8D4,#C061FA);color:#2B0420}
+.cat.c6{background:linear-gradient(135deg,#6EE7B7,#0FA57C);color:#032B1C}
+.cat.c7{background:linear-gradient(135deg,#93C5FD,#3B82F6);color:#041C3D}
+
+/* ---------- Bandeau artistes ---------- */
+.band{
+  position:relative;border-radius:24px;overflow:hidden;margin:46px 0 8px;
+  min-height:230px;display:flex;align-items:center;background:var(--bg1);border:1px solid var(--line);
+}
+.band img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4}
+.band::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg, rgba(13,10,26,.93) 34%, rgba(13,10,26,.3))}
+.band .band-in{position:relative;z-index:1;padding:34px 30px;max-width:600px}
+.band h2{font-size:clamp(19px,3vw,27px)}
+.band p{color:var(--txt2);margin:10px 0 18px}
+
+/* ---------- Cartes produit ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px}
+@media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr);gap:13px}}
+.card{
+  background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);
+  overflow:hidden;transition:.2s;cursor:pointer;display:flex;flex-direction:column;
+}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,184,77,.4);box-shadow:var(--shadow)}
+.cov{position:relative;aspect-ratio:1;background:var(--bg2);overflow:hidden}
+.cov img{width:100%;height:100%;object-fit:cover;transition:.35s}
+.card:hover .cov img{transform:scale(1.05)}
+.cov .noimg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--txt2)}
+.cov .playw{
+  position:absolute;right:10px;bottom:10px;width:44px;height:44px;border-radius:50%;
+  background:var(--grad);color:#1A0D06;display:flex;align-items:center;justify-content:center;
+  font-size:17px;opacity:0;transform:translateY(6px);transition:.2s;box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+.card:hover .playw,.cov .playw.show{opacity:1;transform:none}
+@media(hover:none){.cov .playw{opacity:1;transform:none}}
+.tag{
+  position:absolute;left:10px;top:10px;font-size:11px;font-weight:700;
+  padding:4px 10px;border-radius:99px;background:rgba(13,10,26,.75);backdrop-filter:blur(6px);
+  color:var(--c2);border:1px solid rgba(255,184,77,.35);text-transform:uppercase;letter-spacing:.6px;
+}
+.card-b{padding:13px 14px 15px;display:flex;flex-direction:column;gap:5px;flex:1}
+.card-t{font-weight:700;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-a{color:var(--txt2);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-f{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px}
+.prix{font-weight:700;font-size:14px;color:var(--c2)}
+.ventes{font-size:12px;color:var(--txt2)}
+.cert{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px}
+.cert.or{background:linear-gradient(135deg,#FFD37A,#B8860B);color:#2B1D00}
+.cert.platine{background:linear-gradient(135deg,#F1F1F5,#9BA3B4);color:#20242E}
+.cert.diamant{background:linear-gradient(135deg,#9BE8FF,#5B8CFF);color:#04122E}
+
+/* ---------- Rangee horizontale mobile ---------- */
+.row-scroll{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(160px,190px);gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.row-scroll::-webkit-scrollbar{display:none}
+.row-scroll .card{scroll-snap-align:start}
+
+/* ---------- Filtres catalogue ---------- */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:20px 0}
+.filters input[type=search]{max-width:320px;border-radius:99px;background:var(--bg1)}
+.chip{
+  font-size:13px;font-weight:600;padding:8px 16px;border-radius:99px;
+  border:1.5px solid var(--line);color:var(--txt2);transition:.15s;
+}
+.chip.on{background:var(--grad);color:#1A0D06;border-color:transparent}
+.filters select{width:auto;border-radius:99px;background:var(--bg1)}
+
+/* ---------- Page produit ---------- */
+.prod{display:grid;grid-template-columns:340px 1fr;gap:36px;margin-top:30px}
+@media(max-width:820px){.prod{grid-template-columns:1fr;gap:22px}}
+.prod-cov{border-radius:var(--r);overflow:hidden;aspect-ratio:1;background:var(--bg2);position:sticky;top:90px}
+@media(max-width:820px){.prod-cov{position:static;max-width:340px;margin:0 auto}}
+.prod-cov img{width:100%;height:100%;object-fit:cover}
+.prod h1{font-size:clamp(23px,3.5vw,34px);font-weight:900;margin:4px 0 6px}
+.prod .artiste{color:var(--c2);font-weight:700;font-size:16px}
+.prod .desc{color:var(--txt2);margin:14px 0;white-space:pre-line}
+.prod-meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}
+.pill{font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:99px;background:var(--bg1);border:1px solid var(--line);color:var(--txt2)}
+.prod-buy{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.big-prix{font-family:'Unbounded';font-weight:700;font-size:24px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- Liste de pistes ---------- */
+.tracks{margin-top:22px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.track{
+  display:flex;align-items:center;gap:13px;padding:12px 16px;
+  border-bottom:1px solid var(--line);transition:.15s;
+}
+.track:last-child{border-bottom:none}
+.track:hover{background:var(--bg1)}
+.track.playing{background:linear-gradient(90deg,rgba(139,92,246,.16),transparent)}
+.track .num{width:22px;text-align:center;color:var(--txt2);font-size:13px;flex:0 0 auto}
+.track .tp{
+  width:38px;height:38px;border-radius:50%;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  border:1.5px solid var(--line);transition:.15s;
+}
+.track .tp:hover{border-color:var(--c1);color:var(--c1)}
+.track .tp.full{background:var(--grad);color:#1A0D06;border-color:transparent}
+.track .ti{flex:1;min-width:0}
+.track .ti b{display:block;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track .ti span{font-size:12px;color:var(--txt2)}
+.track .dur{font-size:13px;color:var(--txt2);font-variant-numeric:tabular-nums}
+.eq{display:inline-flex;gap:2.5px;align-items:flex-end;height:15px}
+.eq i{width:3px;background:var(--c3);border-radius:2px;animation:eq .9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.25s}.eq i:nth-child(3){animation-delay:.5s}
+@keyframes eq{0%,100%{height:4px}50%{height:15px}}
+
+/* ---------- Lecteur fixe ---------- */
+#player{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;
+  background:rgba(22,17,43,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);
+  padding:0 14px env(safe-area-inset-bottom);
+}
+#player.on{display:block}
+#pbar{height:4px;background:rgba(245,239,228,.12);border-radius:99px;cursor:pointer;position:relative;margin-top:8px}
+#pbar .fill{height:100%;width:0;background:var(--grad);border-radius:99px;position:relative}
+#pbar .fill::after{content:"";position:absolute;right:-6px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px rgba(255,184,77,.7)}
+.player-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:9px 0 11px}
+#pcov{width:46px;height:46px;border-radius:50%;object-fit:cover;flex:0 0 auto;animation:spin 8s linear infinite;border:2px solid rgba(255,184,77,.5)}
+#pcov.paused{animation-play-state:paused}
+.pinfo{min-width:0;flex:1}
+.pinfo b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pinfo span{font-size:12px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.pctl{display:flex;align-items:center;gap:6px}
+.pctl button{
+  width:40px;height:40px;border-radius:50%;font-size:16px;color:var(--txt);
+  display:flex;align-items:center;justify-content:center;transition:.15s;
+}
+.pctl button:hover{background:rgba(245,239,228,.09)}
+#pplay{background:var(--grad);color:#1A0D06;width:46px;height:46px;font-size:18px}
+#ptime{font-size:12px;color:var(--txt2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pextra{font-size:11px;font-weight:700;color:var(--c3);border:1px solid rgba(139,92,246,.5);padding:3px 9px;border-radius:99px;white-space:nowrap}
+@media(max-width:640px){#ptime,.pctl .side{display:none}}
+
+/* ---------- Modales ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:80;background:rgba(8,6,18,.72);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:18px;
+}
+.modal{
+  background:var(--bg1);border:1px solid var(--line);border-radius:22px;
+  width:100%;max-width:440px;max-height:88vh;overflow-y:auto;padding:26px;
+  box-shadow:var(--shadow);animation:pop .22s ease;
+}
+.modal.lg{max-width:640px}
+.modal.video{max-width:880px}
+.modal.video video{width:100%;max-height:68vh;border-radius:14px;background:#000;margin-top:12px}
+@keyframes pop{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.modal h2{font-size:19px;margin-bottom:4px}
+.modal .close{float:right;font-size:20px;color:var(--txt2);padding:2px 8px}
+.tabs{display:flex;gap:6px;margin:16px 0;background:var(--bg0);padding:5px;border-radius:99px}
+.tabs button{flex:1;padding:9px;border-radius:99px;font-weight:700;font-size:13.5px;color:var(--txt2)}
+.tabs button.on{background:var(--grad);color:#1A0D06}
+
+/* ---------- Toast / etats ---------- */
+#toasts{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;width:min(420px,92vw)}
+.toast{
+  background:var(--bg2);border:1px solid var(--line);border-left:4px solid var(--ok);
+  border-radius:var(--r2);padding:12px 16px;font-size:14px;font-weight:600;
+  box-shadow:var(--shadow);animation:pop .25s ease;
+}
+.toast.err{border-left-color:var(--err)}
+.toast.warn{border-left-color:var(--warn)}
+.empty{
+  text-align:center;padding:56px 20px;color:var(--txt2);
+  border:1.5px dashed var(--line);border-radius:var(--r);margin:24px 0;
+}
+.empty .big{font-size:40px;margin-bottom:10px}
+.loading{text-align:center;padding:50px;color:var(--txt2)}
+.spin-ico{display:inline-block;width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--c1);border-radius:50%;animation:spin 1s linear infinite}
+
+/* ---------- Statuts / badges ---------- */
+.badge{font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:99px;display:inline-block}
+.badge.attente{background:rgba(251,191,36,.15);color:var(--warn);border:1px solid rgba(251,191,36,.4)}
+.badge.valide{background:rgba(52,211,153,.14);color:var(--ok);border:1px solid rgba(52,211,153,.4)}
+.badge.rejete{background:rgba(248,113,113,.14);color:var(--err);border:1px solid rgba(248,113,113,.4)}
+.badge.online{background:rgba(52,211,153,.14);color:var(--ok)}
+.badge.offline{background:rgba(162,155,196,.14);color:var(--txt2)}
+
+/* ---------- Panneaux (artiste / admin) ---------- */
+.panel{background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin:18px 0}
+.panel h3{font-size:16px;margin-bottom:12px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+.stat{background:var(--bg0);border:1px solid var(--line);border-radius:var(--r2);padding:16px;text-align:center}
+.stat b{font-family:'Unbounded';font-size:21px;display:block;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:12px;color:var(--txt2)}
+.list-item{
+  display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;
+}
+.list-item:last-child{border-bottom:none}
+.list-item .mini-cov{width:48px;height:48px;border-radius:10px;object-fit:cover;background:var(--bg2);flex:0 0 auto}
+.list-item .li-main{flex:1;min-width:150px}
+.list-item .li-main b{font-size:14.5px;display:block}
+.list-item .li-main span{font-size:12.5px;color:var(--txt2)}
+.list-item .li-actions{display:flex;gap:8px;flex-wrap:wrap}
+.upload-zone{
+  border:2px dashed var(--line);border-radius:var(--r);padding:26px;text-align:center;
+  color:var(--txt2);cursor:pointer;transition:.15s;font-size:14px;
+}
+.upload-zone:hover{border-color:var(--c2);color:var(--c2)}
+.upload-zone input{display:none}
+.prog{font-size:13px;color:var(--c2);margin-top:10px;min-height:18px}
+footer{border-top:1px solid var(--line);margin-top:70px;padding:34px 0 40px;color:var(--txt2);font-size:13.5px}
+footer .logo{font-size:17px;margin-bottom:8px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+@media(max-width:720px){.footer-grid{grid-template-columns:1fr;gap:22px}}
+.footer-links{display:flex;flex-direction:column;gap:9px}
+.footer-links b{color:var(--txt);font-size:13px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.footer-links a{color:var(--txt2)}
+.footer-links a:hover{color:var(--c2)}
+.legal{max-width:760px;margin:20px auto 0}
+.legal h1{font-family:'Unbounded';font-size:clamp(24px,4vw,34px);margin-bottom:6px}
+.legal .maj{color:var(--txt2);font-size:13px;margin-bottom:26px}
+.legal h2{font-size:19px;margin:28px 0 10px;color:var(--txt)}
+.legal p,.legal li{color:var(--txt2);line-height:1.75;font-size:14.5px}
+.legal ul{margin:8px 0 8px 20px}
+.legal li{margin-bottom:6px}
+.legal .tabs-legal{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.legal .tabs-legal a{padding:8px 15px;border-radius:99px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--txt2)}
+.legal .tabs-legal a.on{background:var(--grad);color:#1A0D06;border-color:transparent}
+.legal .box{background:var(--bg1);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-top:14px}
+@media(prefers-reduced-motion:reduce){
+  *,.vinyl,#pcov{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-in">
+    <a href="#/" class="logo"><span class="disc"></span>Sanki<em>Zik</em></a>
+    <nav id="nav"></nav>
+  </div>
+</header>
+
+<main id="app" class="wrap"></main>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <div class="logo"><span class="disc"></span>Sanki<em>Zik</em></div>
+      <p>La plateforme qui valorise la musique africaine. Achetez les oeuvres de vos artistes et écoutez-les ici, en illimité, sans rien installer.</p>
+      <p style="margin-top:8px">Paiement par Orange Money, Moov Money et Wave.</p>
+    </div>
+    <div class="footer-links">
+      <b>Naviguer</b>
+      <a href="#/">Accueil</a>
+      <a href="#/catalogue">Catalogue</a>
+      <a href="#/bibliotheque">Ma bibliothèque</a>
+    </div>
+    <div class="footer-links">
+      <b>Informations</b>
+      <a href="#/legal/apropos">À propos</a>
+      <a href="#/legal/confidentialite">Confidentialité</a>
+      <a href="#/legal/conditions">Conditions d'utilisation</a>
+      <a href="#/legal/mentions">Mentions légales</a>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:22px;font-size:12.5px;opacity:.7">© <span id="annee"></span> SankiZik. Tous droits réservés.</div>
+</footer>
+
+<!-- Lecteur permanent -->
+<div id="player">
+  <div id="pbar"><div class="fill" id="pfill"></div></div>
+  <div class="player-in">
+    <img id="pcov" alt="" src="">
+    <div class="pinfo"><b id="ptitre">...</b><span id="partiste">...</span></div>
+    <span class="pextra" id="pmode" style="display:none">EXTRAIT 30s</span>
+    <div class="pctl">
+      <button class="side" id="pprev" title="Piste précédente">&#9198;</button>
+      <button id="pplay" title="Lecture / pause">&#9654;</button>
+      <button class="side" id="pnext" title="Piste suivante">&#9197;</button>
+      <button id="pclose" title="Fermer le lecteur">&#10005;</button>
+    </div>
+    <span id="ptime">0:00 / 0:00</span>
+  </div>
+</div>
+
+<div id="modals"></div>
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script>
+/* ================= CONFIGURATION ================= */
+const SUPABASE_URL = "https://qnctrarcbuunozibppqy.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Pu6TYaly_pXKnBEvsB5BhA_f33OYRA-";
+const DUREE_EXTRAIT = 30;          /* secondes d'extrait gratuit */
+const SEUILS_CERT = [
+  {min:100000, label:"Disque de Diamant", cls:"diamant"},
+  {min:10000,  label:"Disque de Platine", cls:"platine"},
+  {min:5000,   label:"Disque d'Or",       cls:"or"}
+];
+/* ================================================= */
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* Images d'ambiance (libres de droits). Remplace ces liens par des photos
+   de TES artistes maliens des que possible : effet garanti. */
+/* Images par defaut, remplacables dans Admin > Reglages */
+const IMAGE_HERO = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=900&q=70";
+const IMAGE_ARTISTES = "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1400&q=70";
+const SEUIL_STATS = 25;   /* les compteurs du hero s'affichent a partir de ce total de ventes */
+
+const CATS = [
+  ["single",  "Singles",          "Titres à l'unité",            "&#127925;", "c1"],
+  ["album",   "Albums",           "Projets complets",            "&#128191;", "c2"],
+  ["beat",    "Beats & Instrus",  "Pour artistes et créateurs",  "&#127929;", "c3"],
+  ["podcast", "Podcasts",         "Émissions et talk-shows",     "&#127908;", "c4"],
+  ["video",   "Vidéos & Clips",   "Clips officiels",             "&#127909;", "c5"],
+  ["film",    "Films & Séries",   "Épisodes et longs métrages",  "&#127916;", "c6"],
+  ["livre",   "Livres & Docs",    "Ebooks et formations",        "&#128218;", "c7"]
+];
+const TYPE_LBL = { single:"Single", album:"Album", beat:"Beat / Instru", podcast:"Podcast", video:"Vidéo / Clip", film:"Film / Série", livre:"Livre" };
+const KIND = { single:"audio", album:"audio", beat:"audio", podcast:"audio", video:"video", film:"video", livre:"doc" };
+const UNITE = { video:"épisode", film:"épisode", podcast:"épisode", livre:"document" };
+const typeLbl = p => TYPE_LBL[p.type] || "Single";
+const kindOf = p => KIND[p.type] || "audio";
+const uniteDe = p => UNITE[p.type] || "piste";
+const estFichierVideo = f => (f.type||"").startsWith("video") || /\.(mp4|webm|mov|mkv|avi)$/i.test(f.name);
+const estFichierPdf = f => f.type === "application/pdf" || /\.pdf$/i.test(f.name);
+
+const S = {
+  session:null, profil:null,
+  produits:[],           /* catalogue public en cache */
+  achats:[],             /* mes achats */
+  config:{},             /* numeros de paiement */
+  urls:{},               /* cache des liens signes { pisteId:{url,exp} } */
+  chargeCatalogue:false
+};
+
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fcfa = n => (Number(n)||0).toLocaleString("fr-FR") + " FCFA";
+const mmss = s => { s=Math.max(0,Math.round(s||0)); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
+
+function toast(msg, type){
+  const d = document.createElement("div");
+  d.className = "toast" + (type ? " "+type : "");
+  d.textContent = msg;
+  $("#toasts").appendChild(d);
+  setTimeout(()=>d.remove(), 4200);
+}
+
+function coverUrl(p){
+  if(!p || !p.cover_path) return "";
+  return sb.storage.from("sz-covers").getPublicUrl(p.cover_path).data.publicUrl;
+}
+function previewUrl(path){
+  if(!path) return "";
+  return sb.storage.from("sz-previews").getPublicUrl(path).data.publicUrl;
+}
+function certDe(v){
+  for(const s of SEUILS_CERT) if((v||0) >= s.min) return s;
+  return null;
+}
+function estAchete(prodId){
+  return S.achats.some(a => a.produit_id === prodId && a.statut === "valide");
+}
+function achatEnAttente(prodId){
+  return S.achats.some(a => a.produit_id === prodId && a.statut === "en_attente");
+}
+function estArtiste(){ return S.profil && (S.profil.role === "artiste" || S.profil.role === "admin"); }
+function estAdmin(){ return S.profil && S.profil.role === "admin"; }
+
+/* ================= NAVIGATION ================= */
+const routes = {
+  "": vueAccueil,
+  "catalogue": vueCatalogue,
+  "produit": vueProduit,
+  "bibliotheque": vueBibliotheque,
+  "artiste": vueEspaceArtiste,
+  "admin": vueAdmin,
+  "compte": vueCompte,
+  "legal": vueLegal
+};
+
+function aller(h){ location.hash = h; }
+
+function renderNav(){
+  const seg = (location.hash.replace(/^#\/?/,"").split("/")[0]) || "";
+  const items = [
+    ["", "Accueil"],
+    ["catalogue", "Catalogue"],
+  ];
+  if(S.session) items.push(["bibliotheque", "Ma bibliothèque"]);
+  if(estArtiste()) items.push(["artiste", "Espace artiste"]);
+  if(estAdmin()) items.push(["admin", "Admin", S.nbAttente]);
+  items.push(S.session ? ["compte", (S.profil && S.profil.nom ? S.profil.nom.split(" ")[0] : "Compte")] : ["compte", "Connexion"]);
+  $("#nav").innerHTML = items.map(([h,l,dot]) =>
+    `<a href="#/${h}" class="${seg===h?"on":""}">${esc(l)}${dot?'<span class="dot"></span>':""}</a>`
+  ).join("");
+}
+
+async function router(){
+  const parts = location.hash.replace(/^#\/?/,"").split("/");
+  const vue = routes[parts[0] || ""] || vueAccueil;
+  renderNav();
+  window.scrollTo(0,0);
+  await vue(parts.slice(1));
+}
+window.addEventListener("hashchange", router);
+
+/* ================= DONNEES ================= */
+async function chargerCatalogue(force){
+  if(S.chargeCatalogue && !force) return;
+  const { data, error } = await sb.from("sz_produits")
+    .select("*").eq("en_ligne", true).order("created_at",{ascending:false});
+  if(!error){ S.produits = data || []; S.chargeCatalogue = true; }
+}
+async function chargerPistes(prodId){
+  const { data } = await sb.from("sz_pistes")
+    .select("*").eq("produit_id", prodId).order("numero");
+  return data || [];
+}
+async function chargerMesAchats(){
+  if(!S.session){ S.achats = []; return; }
+  const { data } = await sb.from("sz_achats")
+    .select("*").eq("user_id", S.session.user.id).order("created_at",{ascending:false});
+  S.achats = data || [];
+}
+async function chargerConfig(){
+  const { data } = await sb.from("sz_config").select("*");
+  S.config = Object.fromEntries((data||[]).map(r => [r.cle, r.valeur]));
+}
+async function chargerProfil(){
+  if(!S.session){ S.profil = null; return; }
+  const { data } = await sb.from("sz_profils").select("*").eq("id", S.session.user.id).maybeSingle();
+  S.profil = data || null;
+  if(estAdmin()){
+    const { count } = await sb.from("sz_achats").select("*",{count:"exact",head:true}).eq("statut","en_attente");
+    S.nbAttente = count || 0;
+  }
+}
+
+/* ================= COMPOSANTS ================= */
+function carteProduit(p){
+  const cert = certDe(p.ventes);
+  const cu = coverUrl(p);
+  return `
+  <div class="card" onclick="aller('#/produit/${p.id}')">
+    <div class="cov">
+      <span class="tag">${typeLbl(p)}</span>
+      ${cu ? `<img src="${cu}" alt="${esc(p.titre)}" loading="lazy">` : `<div class="noimg">&#127925;</div>`}
+      ${kindOf(p) === "audio" ? `<button class="playw" title="Écouter un extrait" onclick="event.stopPropagation();extraitProduit('${p.id}')">&#9654;</button>` : ""}
+    </div>
+    <div class="card-b">
+      <div class="card-t">${esc(p.titre)}</div>
+      <div class="card-a">${esc(p.nom_artiste)}</div>
+      ${cert ? `<div><span class="cert ${cert.cls}">${cert.label}</span></div>` : ""}
+      <div class="card-f">
+        <span class="prix">${fcfa(p.prix_fcfa)}</span>
+        <span class="ventes">${(p.ventes||0).toLocaleString("fr-FR")} vente${p.ventes>1?"s":""}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function extraitProduit(prodId){
+  const p = S.produits.find(x => x.id === prodId);
+  if(!p) return;
+  const pistes = await chargerPistes(prodId);
+  const t = pistes.find(x => x.preview_path);
+  if(!t){ toast("Pas d'extrait disponible pour cette oeuvre", "warn"); return; }
+  jouerFile(pistes.filter(x=>x.preview_path).map(x => ({
+    piste:x, produit:p, mode:"extrait"
+  })), 0);
+}
+
+/* ================= VUE : ACCUEIL ================= */
+async function vueAccueil(){
+  $("#app").innerHTML = `<div class="loading"><span class="spin-ico"></span></div>`;
+  await Promise.all([chargerCatalogue(), chargerConfig()]);
+  const top = [...S.produits].sort((a,b)=>(b.ventes||0)-(a.ventes||0)).slice(0,8);
+  const nouveaux = S.produits.slice(0,8);
+  const vedette = top[0];
+  const imgHero = S.config.image_accueil ? sb.storage.from("sz-covers").getPublicUrl(S.config.image_accueil).data.publicUrl : IMAGE_HERO;
+  const imgBand = S.config.image_artistes ? sb.storage.from("sz-covers").getPublicUrl(S.config.image_artistes).data.publicUrl : IMAGE_ARTISTES;
+  const totalVentes = S.produits.reduce((s,p)=>s+(p.ventes||0),0);
+  const nbArtistes = new Set(S.produits.map(p => (p.nom_artiste||"").toLowerCase())).size;
+  const statsOuAtouts = totalVentes >= SEUIL_STATS
+    ? `<div class="hero-stats">
+         <div><b>${S.produits.length.toLocaleString("fr-FR")}</b><span>oeuvres</span></div>
+         <div><b>${nbArtistes.toLocaleString("fr-FR")}</b><span>artistes</span></div>
+         <div><b>${totalVentes.toLocaleString("fr-FR")}</b><span>ventes</span></div>
+       </div>`
+    : `<p class="muted" style="margin-top:14px">&#127911; Extraits de ${DUREE_EXTRAIT}s gratuits &nbsp;&#183;&nbsp; &#128274; Écoute illimitée après achat &nbsp;&#183;&nbsp; &#128241; Paiement mobile money</p>`;
+  $("#app").innerHTML = `
+  <section class="hero" style="margin:0 -18px">
+    <div class="hero-in">
+      <div>
+        <h1>Ta musique, tes artistes,<br><em>ton empire sonore.</em></h1>
+        <p>Achète les albums, sons, films et livres de tes artistes préférés par mobile money, puis profites-en directement ici, sur téléphone comme sur ordinateur. Rien à installer, rien à télécharger.</p>
+        <div class="hero-search">
+          <input type="search" id="hsearch" placeholder="Chercher un artiste, un album, un son..." aria-label="Recherche">
+          <button class="btn btn-p" onclick="lancerRecherche()">Chercher</button>
+        </div>
+        ${statsOuAtouts}
+      </div>
+      <div class="hero-visu">
+        <div class="hero-photo"><img src="${imgHero}" alt="Mélomane avec un casque" loading="lazy" onerror="this.parentNode.style.display='none'"></div>
+        <div class="vinyl" onclick="${vedette?`aller('#/produit/${vedette.id}')`:""}" style="cursor:pointer" title="${vedette?esc(vedette.titre):""}">
+          <div class="center">${vedette && coverUrl(vedette) ? `<img src="${coverUrl(vedette)}" alt="">` : ""}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <h2 class="section-t">&#129517; Parcourir par catégorie</h2>
+  <div class="cats">
+    ${CATS.map(c => `
+      <div class="cat ${c[4]}" onclick="voirCategorie('${c[0]}')" role="button" tabindex="0"
+           onkeydown="if(event.key==='Enter')voirCategorie('${c[0]}')">
+        <span class="ic">${c[3]}</span>${c[1]}<small>${c[2]}</small>
+      </div>`).join("")}
+  </div>
+  ${top.length ? `<h2 class="section-t">&#128293; Les plus vendus</h2><div class="grid">${top.map(carteProduit).join("")}</div>` : ""}
+  ${nouveaux.length ? `<h2 class="section-t">&#10024; Nouveautés</h2><div class="grid">${nouveaux.map(carteProduit).join("")}</div>` : ""}
+  ${!S.produits.length ? `<div class="empty"><div class="big">&#127925;</div>Le catalogue est vide pour le moment.<br>Les premières oeuvres arrivent bientôt.</div>` : ""}
+  <div class="band">
+    <img src="${imgBand}" alt="" loading="lazy" onerror="this.style.display='none'">
+    <div class="band-in">
+      <h2>Artiste, beatmaker, réalisateur ou auteur ?</h2>
+      <p>Vends tes oeuvres sur SankiZik et encaisse par mobile money. Tu gardes le contrôle : tes fichiers restent protégés, tes fans écoutent ici, et tu suis tes ventes en temps réel.</p>
+      ${S.session
+        ? `<a class="btn btn-p" href="#/compte">Activer mon espace artiste</a>`
+        : `<button class="btn btn-p" onclick="ouvrirAuth('Créez votre compte pour commencer')">Créer mon compte</button>`}
+    </div>
+  </div>
+  `;
+  $("#hsearch").addEventListener("keydown", e => { if(e.key==="Enter") lancerRecherche(); });
+}
+function voirCategorie(t){
+  catState.type = t; catState.q = "";
+  aller("#/catalogue");
+}
+function lancerRecherche(){
+  const q = $("#hsearch") ? $("#hsearch").value.trim() : "";
+  sessionStorage.setItem("sz_q", q);
+  aller("#/catalogue");
+}
+
+/* ================= VUE : CATALOGUE ================= */
+let catState = { q:"", type:"tous", tri:"recent" };
+async function vueCatalogue(){
+  $("#app").innerHTML = `<div class="loading"><span class="spin-ico"></span></div>`;
+  await chargerCatalogue();
+  const q0 = sessionStorage.getItem("sz_q");
+  if(q0 !== null){ catState.q = q0; sessionStorage.removeItem("sz_q"); }
+  $("#app").innerHTML = `
+    <h2 class="section-t" style="margin-top:26px">Catalogue</h2>
+    <div class="filters">
+      <input type="search" id="cq" placeholder="Rechercher..." value="${esc(catState.q)}" aria-label="Recherche">
+      <button class="chip" data-t="tous">Tout</button>
+      ${CATS.map(c => `<button class="chip" data-t="${c[0]}">${c[1]}</button>`).join("")}
+      <select id="ctri" aria-label="Trier">
+        <option value="recent">Les plus récents</option>
+        <option value="ventes">Les plus vendus</option>
+        <option value="prixasc">Prix croissant</option>
+        <option value="prixdesc">Prix décroissant</option>
+      </select>
+    </div>
+    <div id="cres"></div>`;
+  $("#cq").addEventListener("input", e => { catState.q = e.target.value; rendreCatalogue(); });
+  $("#ctri").value = catState.tri;
+  $("#ctri").addEventListener("change", e => { catState.tri = e.target.value; rendreCatalogue(); });
+  $$(".chip").forEach(c => c.addEventListener("click", () => { catState.type = c.dataset.t; rendreCatalogue(); }));
+  rendreCatalogue();
+}
+function rendreCatalogue(){
+  $$(".chip").forEach(c => c.classList.toggle("on", c.dataset.t === catState.type));
+  let list = [...S.produits];
+  if(catState.type !== "tous") list = list.filter(p => p.type === catState.type);
+  const q = catState.q.toLowerCase().trim();
+  if(q) list = list.filter(p => (p.titre+" "+p.nom_artiste).toLowerCase().includes(q));
+  if(catState.tri === "ventes") list.sort((a,b)=>(b.ventes||0)-(a.ventes||0));
+  if(catState.tri === "prixasc") list.sort((a,b)=>a.prix_fcfa-b.prix_fcfa);
+  if(catState.tri === "prixdesc") list.sort((a,b)=>b.prix_fcfa-a.prix_fcfa);
+  $("#cres").innerHTML = list.length
+    ? `<div class="grid">${list.map(carteProduit).join("")}</div>`
+    : `<div class="empty"><div class="big">&#128269;</div>Aucun résultat. Essayez un autre mot-clé.</div>`;
+}
+
+/* ================= VUE : PRODUIT ================= */
+async function vueProduit(params){
+  const id = params[0];
+  $("#app").innerHTML = `<div class="loading"><span class="spin-ico"></span></div>`;
+  await chargerCatalogue();
+  let p = S.produits.find(x => x.id === id);
+  if(!p){
+    const { data } = await sb.from("sz_produits").select("*").eq("id", id).maybeSingle();
+    p = data;
+  }
+  if(!p){ $("#app").innerHTML = `<div class="empty"><div class="big">&#128533;</div>Oeuvre introuvable.</div>`; return; }
+  const pistes = await chargerPistes(id);
+  const cert = certDe(p.ventes);
+  const possede = estAchete(p.id);
+  const attente = achatEnAttente(p.id);
+  const proprio = S.session && p.artiste_id === S.session.user.id;
+  const acces = possede || proprio || estAdmin();
+  const cu = coverUrl(p);
+  let boutonAchat;
+  const verbe = kindOf(p) === "video" ? "Regarder" : kindOf(p) === "doc" ? "Lire" : "Écouter";
+  if(acces && !proprio) boutonAchat = `<span class="badge valide">&#10003; Dans votre bibliothèque</span> <button class="btn btn-p" onclick="lireProduit('${p.id}')">&#9654; ${verbe}</button>`;
+  else if(proprio) boutonAchat = `<span class="badge online">Votre oeuvre</span> <button class="btn btn-p" onclick="lireProduit('${p.id}')">&#9654; ${verbe}</button>`;
+  else if(attente) boutonAchat = `<span class="badge attente">&#8987; Paiement en cours de validation</span>`;
+  else boutonAchat = `<button class="btn btn-p" onclick="ouvrirAchat('${p.id}')">Acheter &nbsp;&#183;&nbsp; ${fcfa(p.prix_fcfa)}</button>`;
+  $("#app").innerHTML = `
+  <div class="prod">
+    <div class="prod-cov">${cu ? `<img src="${cu}" alt="${esc(p.titre)}">` : `<div class="noimg" style="height:100%;display:flex;align-items:center;justify-content:center;font-size:70px">&#127925;</div>`}</div>
+    <div>
+      <span class="pill">${typeLbl(p)}</span>
+      <h1>${esc(p.titre)}</h1>
+      <div class="artiste">${esc(p.nom_artiste)}</div>
+      <div class="prod-meta">
+        ${cert ? `<span class="cert ${cert.cls}">${cert.label}</span>` : ""}
+        <span class="pill">${(p.ventes||0).toLocaleString("fr-FR")} vente${p.ventes>1?"s":""}</span>
+        <span class="pill">${pistes.length} ${uniteDe(p)}${pistes.length>1?"s":""}</span>
+      </div>
+      ${p.description ? `<p class="desc">${esc(p.description)}</p>` : ""}
+      <div class="prod-buy">
+        ${!acces ? `<span class="big-prix">${fcfa(p.prix_fcfa)}</span>` : ""}
+        ${boutonAchat}
+      </div>
+      ${!acces ? `<p class="muted">${kindOf(p) === "video"
+        ? "Après validation de votre paiement, les épisodes sont visionnables ici en illimité."
+        : kindOf(p) === "doc"
+        ? "Après validation de votre paiement, les documents sont lisibles ici en illimité."
+        : `Après validation de votre paiement, l'oeuvre complète est écoutable ici en illimité. Les extraits de ${DUREE_EXTRAIT}s restent gratuits.`}</p>` : ""}
+      <div class="tracks">
+        ${pistes.map((t,i) => ligneP(t, i, p, acces)).join("") || `<div class="track"><span class="muted">Aucune piste pour le moment.</span></div>`}
+      </div>
+    </div>
+  </div>`;
+  window._pistesCourantes = pistes; window._prodCourant = p;
+}
+function ligneP(t, i, p, acces){
+  const enCours = P.courant && P.courant.piste.id === t.id;
+  const kind = kindOf(p);
+  const action = kind === "video" ? `lireVideo(${i})` : kind === "doc" ? `lireDocument(${i})` : `lirePiste(${i})`;
+  const titreBtn = kind === "video" ? "Regarder l'épisode" : kind === "doc" ? "Lire le document" : "Écouter la piste complète";
+  const icone = kind === "doc" ? "&#128214;" : "&#9654;";
+  const sousTitre = acces
+    ? (kind === "video" ? "Épisode complet" : kind === "doc" ? "Document complet" : "Piste complète")
+    : (t.preview_path ? "Extrait "+DUREE_EXTRAIT+"s gratuit" : "Réservé aux acheteurs");
+  return `
+  <div class="track ${enCours ? "playing":""}" id="tr-${t.id}">
+    <span class="num">${t.numero || i+1}</span>
+    ${acces
+      ? `<button class="tp full" title="${titreBtn}" onclick="${action}">${icone}</button>`
+      : (t.preview_path
+          ? `<button class="tp" title="Écouter l'extrait" onclick="lireExtrait(${i})">&#9654;</button>`
+          : `<span class="tp" style="opacity:.3">&#128274;</span>`)}
+    <div class="ti">
+      <b>${esc(t.titre)} ${enCours ? '<span class="eq"><i></i><i></i><i></i></span>' : ""}</b>
+      <span>${sousTitre}</span>
+    </div>
+    <span class="dur">${t.duree_sec ? mmss(t.duree_sec) : ""}</span>
+  </div>`;
+}
+async function lireVideo(i){
+  const t = window._pistesCourantes[i], p = window._prodCourant;
+  if(!t) return;
+  const { data, error } = await sb.storage.from("sz-audio").createSignedUrl(t.audio_path, 3600);
+  if(error || !data){ toast("Accès refusé. Achetez l'oeuvre pour regarder cet épisode.", "err"); return; }
+  P.audio.pause();
+  $("#modals").innerHTML = `
+  <div class="overlay" onclick="if(event.target===this)fermerVideo()">
+    <div class="modal video" oncontextmenu="return false">
+      <button class="close" onclick="fermerVideo()">&#10005;</button>
+      <h2>${esc(t.titre)}</h2>
+      <p class="muted">${esc(p.titre)} · ${esc(p.nom_artiste)}</p>
+      <video id="vplay" controls autoplay playsinline controlsList="nodownload noremoteplayback" disablepictureinpicture src="${data.signedUrl}"></video>
+    </div>
+  </div>`;
+}
+async function lireDocument(i){
+  const t = window._pistesCourantes[i], p = window._prodCourant;
+  if(!t) return;
+  const { data, error } = await sb.storage.from("sz-audio").createSignedUrl(t.audio_path, 3600);
+  if(error || !data){ toast("Accès refusé. Achetez l'oeuvre pour lire ce document.", "err"); return; }
+  P.audio.pause();
+  $("#modals").innerHTML = `
+  <div class="overlay" onclick="if(event.target===this)fermerModal()">
+    <div class="modal video" oncontextmenu="return false">
+      <button class="close" onclick="fermerModal()">&#10005;</button>
+      <h2>${esc(t.titre)}</h2>
+      <p class="muted">${esc(p.titre)} · ${esc(p.nom_artiste)}</p>
+      <iframe src="${data.signedUrl}#toolbar=0&navpanes=0" style="width:100%;height:70vh;border:0;border-radius:14px;background:#fff;margin-top:12px"></iframe>
+    </div>
+  </div>`;
+}
+function fermerVideo(){ const v = $("#vplay"); if(v) v.pause(); fermerModal(); }
+function lirePiste(i){
+  const file = window._pistesCourantes.map(t => ({piste:t, produit:window._prodCourant, mode:"complet"}));
+  jouerFile(file, i);
+}
+function lireExtrait(i){
+  const dispo = window._pistesCourantes.filter(t => t.preview_path);
+  const t = window._pistesCourantes[i];
+  const idx = dispo.findIndex(x => x.id === t.id);
+  if(idx < 0){ toast("Pas d'extrait pour cette piste", "warn"); return; }
+  jouerFile(dispo.map(x => ({piste:x, produit:window._prodCourant, mode:"extrait"})), idx);
+}
+function lireProduit(id){
+  if(window._prodCourant && window._prodCourant.id === id && window._pistesCourantes.length){
+    const k = kindOf(window._prodCourant);
+    if(k === "video") lireVideo(0); else if(k === "doc") lireDocument(0); else lirePiste(0);
+  }
+}
+
+/* ================= LECTEUR AUDIO ================= */
+const P = {
+  audio:new Audio(), file:[], index:-1, courant:null
+};
+P.audio.preload = "auto";
+P.audio.addEventListener("timeupdate", () => {
+  if(!P.audio.duration) return;
+  $("#pfill").style.width = (P.audio.currentTime / P.audio.duration * 100) + "%";
+  $("#ptime").textContent = mmss(P.audio.currentTime) + " / " + mmss(P.audio.duration);
+});
+P.audio.addEventListener("ended", () => pisteSuivante());
+P.audio.addEventListener("play",  () => { $("#pplay").innerHTML = "&#10074;&#10074;"; $("#pcov").classList.remove("paused"); });
+P.audio.addEventListener("pause", () => { $("#pplay").innerHTML = "&#9654;"; $("#pcov").classList.add("paused"); });
+P.audio.addEventListener("error", () => {
+  if(P.courant) toast("Lecture impossible. Vérifiez votre connexion.", "err");
+});
+
+async function urlPiste(item){
+  if(item.mode === "extrait") return previewUrl(item.piste.preview_path);
+  const c = S.urls[item.piste.id];
+  if(c && c.exp > Date.now() + 60000) return c.url;
+  const { data, error } = await sb.storage.from("sz-audio").createSignedUrl(item.piste.audio_path, 3600);
+  if(error || !data){ toast("Accès refusé à ce fichier. Connectez-vous ou achetez l'oeuvre.", "err"); return null; }
+  S.urls[item.piste.id] = { url:data.signedUrl, exp:Date.now() + 3500*1000 };
+  return data.signedUrl;
+}
+
+async function jouerFile(file, idx){
+  if(!file.length) return;
+  P.file = file; 
+  await jouerIndex(idx);
+}
+async function jouerIndex(idx){
+  if(idx < 0 || idx >= P.file.length) return;
+  const item = P.file[idx];
+  const url = await urlPiste(item);
+  if(!url) return;
+  P.index = idx; P.courant = item;
+  P.audio.src = url;
+  P.audio.play().catch(()=>{});
+  const cu = coverUrl(item.produit);
+  $("#pcov").src = cu || "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><rect width='10' height='10' fill='%23221A48'/></svg>";
+  $("#ptitre").textContent = item.piste.titre;
+  $("#partiste").textContent = item.produit.nom_artiste + " · " + item.produit.titre;
+  $("#pmode").style.display = item.mode === "extrait" ? "" : "none";
+  $("#player").classList.add("on");
+  document.documentElement.style.setProperty("--player-h", "84px");
+  majLignesPistes();
+  if("mediaSession" in navigator){
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title:item.piste.titre, artist:item.produit.nom_artiste, album:item.produit.titre,
+      artwork: cu ? [{src:cu, sizes:"512x512"}] : []
+    });
+    navigator.mediaSession.setActionHandler("previoustrack", pistePrecedente);
+    navigator.mediaSession.setActionHandler("nexttrack", pisteSuivante);
+  }
+}
+function majLignesPistes(){
+  $$(".track").forEach(el => {
+    const on = P.courant && el.id === "tr-" + P.courant.piste.id;
+    el.classList.toggle("playing", on);
+    const eq = el.querySelector(".eq");
+    if(on && !eq){ const b = el.querySelector(".ti b"); if(b) b.insertAdjacentHTML("beforeend", ' <span class="eq"><i></i><i></i><i></i></span>'); }
+    if(!on && eq) eq.remove();
+  });
+}
+function pisteSuivante(){ if(P.index < P.file.length-1) jouerIndex(P.index+1); else P.audio.pause(); }
+function pistePrecedente(){ if(P.audio.currentTime > 4) P.audio.currentTime = 0; else if(P.index > 0) jouerIndex(P.index-1); }
+
+$("#pplay").addEventListener("click", () => { P.audio.paused ? P.audio.play() : P.audio.pause(); });
+$("#pnext").addEventListener("click", pisteSuivante);
+$("#pprev").addEventListener("click", pistePrecedente);
+$("#pclose").addEventListener("click", () => {
+  P.audio.pause(); P.audio.src = ""; P.courant = null; P.index = -1;
+  $("#player").classList.remove("on");
+  document.documentElement.style.setProperty("--player-h", "0px");
+  majLignesPistes();
+});
+$("#pbar").addEventListener("click", e => {
+  if(!P.audio.duration) return;
+  const r = $("#pbar").getBoundingClientRect();
+  P.audio.currentTime = (e.clientX - r.left) / r.width * P.audio.duration;
+});
+/* Dissuasion : pas de clic droit ni de telechargement sur l'audio */
+P.audio.controlsList = "nodownload";
+document.addEventListener("contextmenu", e => { if(e.target.closest("#player")) e.preventDefault(); });
+
+/* ================= VUE : BIBLIOTHEQUE ================= */
+async function vueBibliotheque(){
+  if(!S.session){ ouvrirAuth(); aller("#/"); return; }
+  $("#app").innerHTML = `<div class="loading"><span class="spin-ico"></span></div>`;
+  await chargerMesAchats();
+  await chargerCatalogue();
+  const valides = S.achats.filter(a => a.statut === "valide");
+  const attente = S.achats.filter(a => a.statut === "en_attente");
+  const prodsDe = list => list.map(a => S.produits.find(p => p.id === a.produit_id) || a._prod).filter(Boolean);
+  /* recuperer les produits qui ne sont plus en ligne mais achetes */
+  for(const a of S.achats){
+    if(!S.produits.find(p => p.id === a.produit_id)){
+      const { data } = await sb.from("sz_produits").select("*").eq("id", a.produit_id).maybeSingle();
+      if(data) a._prod = data;
+    }
+  }
+  const pv = prodsDe(valides), pa = prodsDe(attente);
+  $("#app").innerHTML = `
+    <h2 class="section-t" style="margin-top:26px">&#127927; Ma bibliothèque</h2>
+    ${pa.length ? `<div class="panel"><h3>&#8987; En attente de validation</h3>
+      ${pa.map(p => `<div class="list-item">
+        ${coverUrl(p) ? `<img class="mini-cov" src="${coverUrl(p)}" alt="">` : `<div class="mini-cov"></div>`}
+        <div class="li-main"><b>${esc(p.titre)}</b><span>${esc(p.nom_artiste)} · ${fcfa(p.prix_fcfa)}</span></div>
+        <span class="badge attente">En validation</span>
+      </div>`).join("")}
+      <p class="muted" style="margin-top:10px">L'administrateur vérifie votre paiement. L'oeuvre apparaîtra ici dès validation.</p>
+    </div>` : ""}
+    ${pv.length ? `<div class="grid">${pv.map(carteProduit).join("")}</div>`
+      : `<div class="empty"><div class="big">&#128230;</div>Votre bibliothèque est vide.<br><a href="#/catalogue">Découvrez le catalogue</a> et achetez vos premières oeuvres.</div>`}
+  `;
+}
+
+/* ================= ACHAT ================= */
+async function ouvrirAchat(prodId){
+  if(!S.session){ ouvrirAuth("Connectez-vous pour acheter"); return; }
+  const p = S.produits.find(x => x.id === prodId);
+  if(!p) return;
+  $("#modals").innerHTML = `
+  <div class="overlay" onclick="if(event.target===this)fermerModal()">
+    <div class="modal">
+      <button class="close" onclick="fermerModal()">&#10005;</button>
+      <h2>Acheter cette oeuvre</h2>
+      <p class="muted">${esc(p.titre)} · ${esc(p.nom_artiste)}</p>
+      <div class="stat" style="margin:16px 0"><b>${fcfa(p.prix_fcfa)}</b><span>paiement sécurisé par mobile money</span></div>
+      <p class="muted">Vous allez être dirigé vers la page de paiement sécurisée. Choisissez Orange Money, entrez votre numéro et validez avec votre code secret. Dès le paiement confirmé, l'oeuvre s'ajoute automatiquement à votre bibliothèque.</p>
+      <button class="btn btn-p btn-block" id="btn-payer" style="margin-top:20px" onclick="lancerPaiement('${p.id}')">Payer ${fcfa(p.prix_fcfa)}</button>
+      <p class="muted" style="margin-top:12px;font-size:12.5px">&#128274; Paiement sécurisé. SankiZik ne voit jamais votre code secret.</p>
+    </div>
+  </div>`;
+}
+async function lancerPaiement(prodId){
+  const btn = $("#btn-payer");
+  if(btn){ btn.disabled = true; btn.textContent = "Préparation du paiement..."; }
+  try{
+    const r = await fetch("/api/payer", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({ produit_id:prodId, user_id:S.session.user.id })
+    });
+    const data = await r.json();
+    if(!r.ok || !data.url){
+      toast(data.error || "Paiement indisponible pour le moment.", "err");
+      if(btn){ btn.disabled = false; btn.textContent = "Réessayer"; }
+      return;
+    }
+    // Redirection vers la page de paiement securisee
+    window.location.href = data.url;
+  }catch(e){
+    toast("Connexion au paiement impossible. Vérifiez votre réseau.", "err");
+    if(btn){ btn.disabled = false; btn.textContent = "Réessayer"; }
+  }
+}
+function fermerModal(){ $("#modals").innerHTML = ""; }
+
+/* ================= AUTHENTIFICATION ================= */
+function ouvrirAuth(msg){
+  $("#modals").innerHTML = `
+  <div class="overlay" onclick="if(event.target===this)fermerModal()">
+    <div class="modal">
+      <button class="close" onclick="fermerModal()">&#10005;</button>
+      <h2>Bienvenue sur SankiZik</h2>
+      ${msg ? `<p class="muted">${esc(msg)}</p>` : `<p class="muted">Votre compte, votre musique, partout.</p>`}
+      <div class="tabs">
+        <button id="tab-c" class="on" onclick="authTab('c')">Connexion</button>
+        <button id="tab-i" onclick="authTab('i')">Inscription</button>
+      </div>
+      <div id="auth-c">
+        <label>E-mail</label><input id="lc-email" type="email" autocomplete="email">
+        <label>Mot de passe</label><input id="lc-mdp" type="password" autocomplete="current-password">
+        <button class="btn btn-p btn-block" style="margin-top:20px" onclick="connexion()">Se connecter</button>
+      </div>
+      <div id="auth-i" style="display:none">
+        <label>Nom complet</label><input id="in-nom" autocomplete="name">
+        <label>E-mail</label><input id="in-email" type="email" autocomplete="email">
+        <label>Mot de passe (6 caractères minimum)</label><input id="in-mdp" type="password" autocomplete="new-password">
+        <button class="btn btn-p btn-block" style="margin-top:20px" onclick="inscription()">Créer mon compte</button>
+      </div>
+    </div>
+  </div>`;
+}
+function authTab(t){
+  $("#tab-c").classList.toggle("on", t==="c"); $("#tab-i").classList.toggle("on", t==="i");
+  $("#auth-c").style.display = t==="c" ? "" : "none";
+  $("#auth-i").style.display = t==="i" ? "" : "none";
+}
+async function connexion(){
+  const { error } = await sb.auth.signInWithPassword({ email:$("#lc-email").value.trim(), password:$("#lc-mdp").value });
+  if(error){ toast("Connexion impossible : " + error.message, "err"); return; }
+  fermerModal();
+}
+async function inscription(){
+  const nom = $("#in-nom").value.trim();
+  if(!nom){ toast("Indiquez votre nom", "warn"); return; }
+  const { error } = await sb.auth.signUp({
+    email:$("#in-email").value.trim(), password:$("#in-mdp").value,
+    options:{ data:{ nom } }
+  });
+  if(error){ toast("Inscription impossible : " + error.message, "err"); return; }
+  fermerModal();
+  toast("Compte créé. Bienvenue sur SankiZik !");
+}
+
+/* ================= VUE : COMPTE ================= */
+async function vueCompte(){
+  if(!S.session){ $("#app").innerHTML = `<div class="empty" style="margin-top:40px"><div class="big">&#128100;</div>Connectez-vous pour accéder à votre compte.<br><br><button class="btn btn-p" onclick="ouvrirAuth()">Connexion / Inscription</button></div>`; return; }
+  const pr = S.profil || {};
+  const roleLbl = { client:"Mélomane", artiste:"Artiste", admin:"Administrateur" }[pr.role] || "Mélomane";
+  $("#app").innerHTML = `
+    <h2 class="section-t" style="margin-top:26px">Mon compte</h2>
+    <div class="panel" style="max-width:520px">
+      <div class="list-item" style="border:none;padding-top:0">
+        <div class="li-main"><b>${esc(pr.nom || "Sans nom")}</b><span>${esc(S.session.user.email || "")} · ${roleLbl}</span></div>
+      </div>
+      <label>Nom affiché</label><input id="cp-nom" value="${esc(pr.nom || "")}">
+      ${estArtiste() ? `<label>Nom d'artiste</label><input id="cp-na" value="${esc(pr.nom_artiste || "")}">` : ""}
+      <label>Téléphone</label><input id="cp-tel" value="${esc(pr.telephone || "")}">
+      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="majProfil()">Enregistrer</button>
+        <button class="btn btn-g" onclick="deconnexion()">Se déconnecter</button>
+      </div>
+      ${!estArtiste() ? `<p class="muted" style="margin-top:16px">Vous êtes artiste et souhaitez vendre vos oeuvres ici ? Contactez l'administrateur pour activer votre espace artiste.</p>` : ""}
+    </div>`;
+}
+async function majProfil(){
+  const maj = { nom:$("#cp-nom").value.trim(), telephone:$("#cp-tel").value.trim() };
+  if($("#cp-na")) maj.nom_artiste = $("#cp-na").value.trim();
+  const { error } = await sb.from("sz_profils").update(maj).eq("id", S.session.user.id);
+  if(error){ toast("Erreur : " + error.message, "err"); return; }
+  await chargerProfil(); renderNav();
+  toast("Profil mis à jour");
+}
+async function deconnexion(){ await sb.auth.signOut(); aller("#/"); }
+
+/* ================= ESPACE ARTISTE ================= */
+async function vueEspaceArtiste(){
+  if(!estArtiste()){ $("#app").innerHTML = `<div class="empty" style="margin-top:40px"><div class="big">&#127908;</div>Espace réservé aux artistes.<br>Contactez l'administrateur pour activer votre compte artiste.</div>`; return; }
+  $("#app").innerHTML = `<div class="loading"><span class="spin-ico"></span></div>`;
+  const uid = S.session.user.id;
+  const [{ data:mesProds }, { data:achatsVisibles }] = await Promise.all([
+    sb.from("sz_produits").select("*").eq("artiste_id", uid).order("created_at",{ascending:false}),
+    sb.from("sz_achats").select("*")
+  ]);
+  const prods = mesProds || [];
+  const idsProds = new Set(prods.map(p => p.id));
+  const ventes = (achatsVisibles||[]).filter(a => idsProds.has(a.produit_id) && a.statut === "valide");
+  const totalFcfa = ventes.reduce((s,a) => s + (a.montant_fcfa||0), 0);
+  $("#app").innerHTML = `
+    <h2 class="section-t" style="margin-top:26px">&#127908; Espace artiste</h2>
+    <div class="stat-row">
+      <div class="stat"><b>${prods.length}</b><span>oeuvre${prods.length>1?"s":""}</span></div>
+      <div class="stat"><b>${ventes.length.toLocaleString("fr-FR")}</b><span>ventes validées</span></div>
+      <div class="stat"><b>${totalFcfa.toLocaleString("fr-FR")}</b><span>FCFA de ventes</span></div>
+    </div>
+    <button class="btn btn-p" onclick="formOeuvre()">+ Publier une nouvelle oeuvre</button>
+    <div id="zone-form"></div>
+    <div class="panel">
+      <h3>Mes oeuvres</h3>
+      ${prods.length ? prods.map(p => `
+        <div class="list-item">
+          ${coverUrl(p) ? `<img class="mini-cov" src="${coverUrl(p)}" alt="">` : `<div class="mini-cov"></div>`}
+          <div class="li-main">
+            <b>${esc(p.titre)}</b>
+            <span>${typeLbl(p)} · ${fcfa(p.prix_fcfa)} · ${(p.ventes||0)} vente${p.ventes>1?"s":""}</span>
+          </div>
+          <span class="badge ${p.en_ligne ? "online":"offline"}">${p.en_ligne ? "En ligne" : "Hors ligne"}</span>
+          <div class="li-actions">
+            <button class="btn btn-g btn-s" onclick="aller('#/produit/${p.id}')">Voir</button>
+            <button class="btn btn-g btn-s" onclick="formModif('${p.id}')">Modifier</button>
+            <button class="btn btn-g btn-s" onclick="basculerLigne('${p.id}', ${!p.en_ligne})">${p.en_ligne ? "Retirer" : "Mettre en ligne"}</button>
+            <button class="btn btn-danger btn-s" onclick="supprimerOeuvre('${p.id}')">Supprimer</button>
+          </div>
+        </div>`).join("")
+      : `<p class="muted">Aucune oeuvre pour le moment. Publiez la première !</p>`}
+    </div>`;
+}
+async function basculerLigne(id, val){
+  const { error } = await sb.from("sz_produits").update({ en_ligne:val }).eq("id", id);
+  if(error){ toast("Erreur : " + error.message, "err"); return; }
+  S.chargeCatalogue = false;
+  toast(val ? "Oeuvre mise en ligne" : "Oeuvre retirée du catalogue");
+  router();
+}
+async function supprimerOeuvre(id){
+  if(!confirm("Supprimer définitivement cette oeuvre et toutes ses pistes ?")) return;
+  const { error } = await sb.from("sz_produits").delete().eq("id", id);
+  if(error){ toast("Erreur : " + error.message, "err"); return; }
+  S.chargeCatalogue = false;
+  toast("Oeuvre supprimée");
+  router();
+}
+
+function formOeuvre(){
+  $("#zone-form").innerHTML = `
+  <div class="panel">
+    <h3>Nouvelle oeuvre</h3>
+    <label>Type</label>
+    <select id="no-type">
+      <option value="single">Single (1 son)</option>
+      <option value="album">Album (plusieurs pistes)</option>
+      <option value="beat">Beat / Instru</option>
+      <option value="podcast">Podcast / Émission</option>
+      <option value="video">Vidéo / Clip</option>
+      <option value="film">Film / Série (épisodes)</option>
+      <option value="livre">Livre / Document (PDF)</option>
+    </select>
+    <label>Titre de l'oeuvre</label><input id="no-titre" placeholder="Ex : Focus">
+    <label>Nom d'artiste ou de studio</label><input id="no-artiste" value="${esc((S.profil && S.profil.nom_artiste) || (S.profil && S.profil.nom) || "")}">
+    <label>Prix (FCFA)</label><input id="no-prix" type="number" min="0" step="100" value="2000">
+    <label>Description (facultatif)</label><textarea id="no-desc" rows="3" placeholder="Présentez l'oeuvre en quelques mots..."></textarea>
+    <label>Pochette (image carrée conseillée)</label>
+    <div class="upload-zone" onclick="this.querySelector('input').click()">
+      <input type="file" id="no-cover" accept="image/*" onchange="this.parentNode.querySelector('span').textContent = this.files[0] ? this.files[0].name : 'Choisir une image'">
+      <span>&#128444; Choisir une image</span>
+    </div>
+    <label>Fichiers (MP3 pour l'audio, MP4 pour la vidéo, PDF pour les livres, dans l'ordre)</label>
+    <div class="upload-zone" onclick="this.querySelector('input').click()">
+      <input type="file" id="no-audio" accept="audio/*,video/*,.pdf,application/pdf" multiple onchange="this.parentNode.querySelector('span').textContent = this.files.length ? this.files.length + ' fichier(s) sélectionné(s)' : 'Choisir les fichiers'">
+      <span>&#127925; Choisir les fichiers</span>
+    </div>
+    <p class="muted" style="margin-top:10px">SankiZik génère automatiquement un extrait gratuit de ${DUREE_EXTRAIT}s pour chaque piste audio. Les fichiers complets et les vidéos restent protégés, réservés aux acheteurs.</p>
+    <div class="prog" id="no-prog"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-p" id="no-go" onclick="publierOeuvre()">Créer l'oeuvre</button>
+      <button class="btn btn-g" onclick="$('#zone-form').innerHTML=''">Annuler</button>
+    </div>
+  </div>`;
+  $("#zone-form").scrollIntoView({behavior:"smooth"});
+}
+
+function nomPiste(fichier, i){
+  return fichier.name.replace(/\.[^.]+$/,"").replace(/^\s*\d+\s*[-._)]*\s*/,"").trim() || ("Piste " + (i+1));
+}
+function extDe(f){ const m = f.name.match(/\.([a-z0-9]+)$/i); return m ? m[1].toLowerCase() : "mp3"; }
+
+async function compresserImage(file, maxCote){
+  try{
+    const img = await createImageBitmap(file);
+    const ratio = Math.min(1, maxCote / Math.max(img.width, img.height));
+    const w = Math.round(img.width * ratio), h = Math.round(img.height * ratio);
+    const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+    cv.getContext("2d").drawImage(img, 0, 0, w, h);
+    const blob = await new Promise(res => cv.toBlob(res, "image/jpeg", .86));
+    return blob || file;
+  }catch(e){ return file; }
+}
+
+async function decoderAudio(file){
+  const buf = await file.arrayBuffer();
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  try{
+    const audio = await ctx.decodeAudioData(buf);
+    return { audio, ctx };
+  }catch(e){ ctx.close(); return { audio:null, ctx:null }; }
+}
+
+function extraireMono(audio){
+  const sr = audio.sampleRate;
+  const dur = Math.min(DUREE_EXTRAIT, audio.duration);
+  const debutSec = audio.duration > DUREE_EXTRAIT + 10 ? Math.min(audio.duration * .2, audio.duration - dur) : 0;
+  const start = Math.floor(debutSec * sr), len = Math.floor(dur * sr);
+  const mono = new Float32Array(len);
+  for(let c = 0; c < audio.numberOfChannels; c++){
+    const d = audio.getChannelData(c);
+    for(let i = 0; i < len; i++) mono[i] += d[start + i] / audio.numberOfChannels;
+  }
+  /* fondu de sortie sur 2 secondes */
+  const fade = Math.min(2 * sr, len);
+  for(let i = 0; i < fade; i++) mono[len - 1 - i] *= i / fade;
+  return { mono, sr };
+}
+function encoderExtrait(audio){
+  let src;
+  try{ src = extraireMono(audio); }catch(e){ return null; }
+  /* Plan A : MP3 (leger) via lamejs */
+  try{
+    if(typeof lamejs !== "undefined"){
+      const { mono, sr } = src;
+      const pcm = new Int16Array(mono.length);
+      for(let i = 0; i < mono.length; i++){
+        const s = Math.max(-1, Math.min(1, mono[i]));
+        pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+      }
+      const enc = new lamejs.Mp3Encoder(1, sr, 96);
+      const parts = [];
+      for(let i = 0; i < pcm.length; i += 1152){
+        const d = enc.encodeBuffer(pcm.subarray(i, i + 1152));
+        if(d.length) parts.push(new Uint8Array(d));
+      }
+      const fin = enc.flush();
+      if(fin.length) parts.push(new Uint8Array(fin));
+      if(parts.length) return { blob:new Blob(parts, { type:"audio/mpeg" }), ext:"mp3", type:"audio/mpeg" };
+    }
+  }catch(e){ /* on bascule sur le plan B */ }
+  /* Plan B : WAV mono allege (~22 kHz), toujours disponible */
+  try{
+    const k = Math.max(1, Math.round(src.sr / 22050));
+    const sr2 = Math.round(src.sr / k);
+    const n = Math.floor(src.mono.length / k);
+    const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const w = (o, s) => { for(let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    w(0,"RIFF"); v.setUint32(4, 36 + n * 2, true); w(8,"WAVE"); w(12,"fmt ");
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, sr2, true); v.setUint32(28, sr2 * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+    w(36,"data"); v.setUint32(40, n * 2, true);
+    let o = 44;
+    for(let i = 0; i < n; i++){
+      let m = 0;
+      for(let j = 0; j < k; j++) m += src.mono[i * k + j] || 0;
+      const s = Math.max(-1, Math.min(1, m / k));
+      v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7FFF, true); o += 2;
+    }
+    return { blob:new Blob([v], { type:"audio/wav" }), ext:"wav", type:"audio/wav" };
+  }catch(e){ return null; }
+}
+
+async function envoyerFichierPiste(produitId, f, numero, prog, pos, total){
+  const estVid = estFichierVideo(f), estPdf = estFichierPdf(f);
+  prog(`Fichier ${pos}/${total} : lecture...`);
+  const { audio, ctx } = (estVid || estPdf) ? { audio:null, ctx:null } : await decoderAudio(f);
+  const idPiste = crypto.randomUUID();
+  const cheminAudio = produitId + "/" + idPiste + "." + extDe(f);
+  prog(`Fichier ${pos}/${total} : envoi du fichier complet...`);
+  const { error:e3 } = await sb.storage.from("sz-audio").upload(cheminAudio, f, { contentType:f.type || (estPdf ? "application/pdf" : estVid ? "video/mp4" : "audio/mpeg") });
+  if(e3) throw e3;
+  let cheminExtrait = "";
+  if(audio){
+    prog(`Fichier ${pos}/${total} : génération de l'extrait ${DUREE_EXTRAIT}s...`);
+    const extrait = encoderExtrait(audio);
+    if(extrait){
+      cheminExtrait = produitId + "/" + idPiste + "." + extrait.ext;
+      const { error:e4 } = await sb.storage.from("sz-previews").upload(cheminExtrait, extrait.blob, { contentType:extrait.type });
+      if(e4) cheminExtrait = "";
+    }
+  }
+  const { error:e5 } = await sb.from("sz_pistes").insert({
+    id:idPiste, produit_id:produitId, titre:nomPiste(f, numero-1), numero,
+    duree_sec:audio ? Math.round(audio.duration) : 0,
+    audio_path:cheminAudio, preview_path:cheminExtrait
+  });
+  if(e5) throw e5;
+  if(ctx) ctx.close();
+}
+
+async function publierOeuvre(){
+  const titre = $("#no-titre").value.trim();
+  const artiste = $("#no-artiste").value.trim();
+  const prix = parseInt($("#no-prix").value, 10);
+  const type = $("#no-type").value;
+  const desc = $("#no-desc").value.trim();
+  const coverF = $("#no-cover").files[0];
+  const audios = [...$("#no-audio").files];
+  const prog = t => { $("#no-prog").textContent = t; };
+  if(!titre || !artiste){ toast("Titre et nom d'artiste obligatoires", "warn"); return; }
+  if(!(prix >= 0)){ toast("Prix invalide", "warn"); return; }
+  if(!audios.length){ toast("Ajoutez au moins un fichier", "warn"); return; }
+  if(type === "single" && audios.length > 1){ toast("Un single = un seul fichier. Choisissez Album pour plusieurs pistes.", "warn"); return; }
+  $("#no-go").disabled = true;
+  try{
+    prog("Création de l'oeuvre...");
+    const { data:prod, error:e1 } = await sb.from("sz_produits").insert({
+      artiste_id:S.session.user.id, type, titre, nom_artiste:artiste,
+      prix_fcfa:prix, description:desc
+    }).select().single();
+    if(e1) throw e1;
+    if(coverF){
+      prog("Envoi de la pochette...");
+      const petit = await compresserImage(coverF, 1000);
+      const cp = prod.id + "/cover_" + Date.now() + ".jpg";
+      const { error:e2 } = await sb.storage.from("sz-covers").upload(cp, petit, { contentType:"image/jpeg" });
+      if(e2) toast("Pochette non envoyée : " + e2.message + ". Vous pourrez la rajouter via Modifier.", "warn");
+      else{
+        const { error:e2b } = await sb.from("sz_produits").update({ cover_path:cp }).eq("id", prod.id);
+        if(e2b) toast("Pochette envoyée mais non liée : " + e2b.message, "warn");
+      }
+    }
+    for(let i = 0; i < audios.length; i++){
+      await envoyerFichierPiste(prod.id, audios[i], i + 1, prog, i + 1, audios.length);
+    }
+    prog("");
+    S.chargeCatalogue = false;
+    toast("Oeuvre créée ! Cliquez sur « Mettre en ligne » pour la publier.");
+    router();
+  }catch(e){
+    prog("");
+    $("#no-go").disabled = false;
+    toast("Erreur : " + (e.message || e), "err");
+  }
+}
+
+/* ================= MODIFICATION D'UNE OEUVRE ================= */
+async function formModif(id){
+  const { data:p } = await sb.from("sz_produits").select("*").eq("id", id).maybeSingle();
+  if(!p){ toast("Oeuvre introuvable", "err"); return; }
+  const pistes = await chargerPistes(id);
+  window._modifProd = p; window._modifPistes = pistes;
+  const uni = uniteDe(p);
+  $("#modals").innerHTML = `
+  <div class="overlay" onclick="if(event.target===this)fermerModal()">
+    <div class="modal lg">
+      <button class="close" onclick="fermerModal()">&#10005;</button>
+      <h2>Modifier : ${esc(p.titre)}</h2>
+      <p class="muted">${typeLbl(p)} · ${(p.ventes||0)} vente${p.ventes>1?"s":""}</p>
+      <label>Titre</label><input id="mo-titre" value="${esc(p.titre)}">
+      <label>Nom d'artiste ou de studio</label><input id="mo-artiste" value="${esc(p.nom_artiste)}">
+      <label>Prix (FCFA)</label><input id="mo-prix" type="number" min="0" step="100" value="${p.prix_fcfa}">
+      <label>Description</label><textarea id="mo-desc" rows="2">${esc(p.description || "")}</textarea>
+      <label>Pochette ${p.cover_path ? "(en remplacer par une nouvelle)" : "(aucune pour le moment : ajoutez-en une)"}</label>
+      <div class="upload-zone" onclick="this.querySelector('input').click()">
+        <input type="file" id="mo-cover" accept="image/*" onchange="this.parentNode.querySelector('span').textContent = this.files[0] ? this.files[0].name : 'Choisir une image'">
+        <span>&#128444; ${p.cover_path ? "Choisir une nouvelle image" : "Choisir une image"}</span>
+      </div>
+      <label>Ajouter des ${uni}s (MP3 ou MP4)</label>
+      <div class="upload-zone" onclick="this.querySelector('input').click()">
+        <input type="file" id="mo-fichiers" accept="audio/*,video/*,.pdf,application/pdf" multiple onchange="this.parentNode.querySelector('span').textContent = this.files.length ? this.files.length + ' fichier(s) sélectionné(s)' : 'Choisir les fichiers'">
+        <span>&#127925; Choisir les fichiers</span>
+      </div>
+      <div class="prog" id="mo-prog"></div>
+      <h3 style="margin-top:18px;font-size:15px">Contenu actuel (${pistes.length} ${uni}${pistes.length>1?"s":""})</h3>
+      ${pistes.map(t => `
+        <div class="list-item">
+          <div class="li-main"><b>${esc(t.titre)}</b><span>N°${t.numero}${t.duree_sec ? " · " + mmss(t.duree_sec) : ""}${t.preview_path ? " · extrait ok" : ""}</span></div>
+          <button class="btn btn-danger btn-s" onclick="supprimerPiste('${t.id}','${id}')">Retirer</button>
+        </div>`).join("") || `<p class="muted">Aucun fichier pour le moment.</p>`}
+      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+        <button class="btn btn-p" id="mo-go" onclick="enregistrerModif('${id}')">Enregistrer</button>
+        <button class="btn btn-g" onclick="fermerModal()">Fermer</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function enregistrerModif(id){
+  const p = window._modifProd || {};
+  const titre = $("#mo-titre").value.trim();
+  const artiste = $("#mo-artiste").value.trim();
+  const prix = parseInt($("#mo-prix").value, 10);
+  if(!titre || !artiste){ toast("Titre et nom d'artiste obligatoires", "warn"); return; }
+  if(!(prix >= 0)){ toast("Prix invalide", "warn"); return; }
+  const prog = t => { $("#mo-prog").textContent = t; };
+  $("#mo-go").disabled = true;
+  try{
+    const { error:e1 } = await sb.from("sz_produits").update({
+      titre, nom_artiste:artiste, prix_fcfa:prix, description:$("#mo-desc").value.trim()
+    }).eq("id", id);
+    if(e1) throw e1;
+    const coverF = $("#mo-cover").files[0];
+    if(coverF){
+      prog("Envoi de la pochette...");
+      const petit = await compresserImage(coverF, 1000);
+      const cp = id + "/cover_" + Date.now() + ".jpg";
+      const { error:e2 } = await sb.storage.from("sz-covers").upload(cp, petit, { contentType:"image/jpeg" });
+      if(e2) throw new Error("Pochette : " + e2.message);
+      const ancien = p.cover_path;
+      const { error:e2b } = await sb.from("sz_produits").update({ cover_path:cp }).eq("id", id);
+      if(e2b) throw e2b;
+      if(ancien && ancien !== cp) sb.storage.from("sz-covers").remove([ancien]);
+    }
+    const fichiers = [...$("#mo-fichiers").files];
+    if(fichiers.length){
+      let numero = Math.max(0, ...(window._modifPistes || []).map(t => t.numero || 0));
+      for(let i = 0; i < fichiers.length; i++){
+        numero++;
+        await envoyerFichierPiste(id, fichiers[i], numero, prog, i + 1, fichiers.length);
+      }
+    }
+    prog("");
+    S.chargeCatalogue = false;
+    toast("Oeuvre mise à jour");
+    fermerModal();
+    router();
+  }catch(e){
+    prog("");
+    $("#mo-go").disabled = false;
+    toast("Erreur : " + (e.message || e), "err");
+  }
+}
+
+async function supprimerPiste(pisteId, produitId){
+  if(!confirm("Retirer ce fichier de l'oeuvre ?")) return;
+  const t = (window._modifPistes || []).find(x => x.id === pisteId);
+  const { error } = await sb.from("sz_pistes").delete().eq("id", pisteId);
+  if(error){ toast("Erreur : " + error.message, "err"); return; }
+  if(t){
+    if(t.audio_path) sb.storage.from("sz-audio").remove([t.audio_path]);
+    if(t.preview_path) sb.storage.from("sz-previews").remove([t.preview_path]);
+  }
+  toast("Fichier retiré");
+  formModif(produitId);
+}
+
+/* ================= PAGES LEGALES ================= */
+async function vueLegal(args){
+  await chargerConfig();
+  const marchand = (S.config.nom_marchand || "").trim() || "SankiZik";
+  const contact = (S.config.tel_orange || "").trim();
+  const contactLigne = contact ? `WhatsApp / téléphone : ${esc(contact)}` : "via le formulaire de contact du site";
+  const page = args[0] || "apropos";
+  const onglets = [
+    ["apropos", "À propos"],
+    ["confidentialite", "Confidentialité"],
+    ["conditions", "Conditions d'utilisation"],
+    ["mentions", "Mentions légales"]
+  ];
+  const contenu = {
+    apropos: `
+      <h1>À propos de SankiZik</h1>
+      <p class="maj">La musique africaine, achetée et écoutée au même endroit.</p>
+      <p>SankiZik est une plateforme qui donne aux artistes, beatmakers, réalisateurs et auteurs d'Afrique les moyens de vendre leurs oeuvres numériques directement à leur public, par mobile money.</p>
+      <p>Notre différence : une fois l'oeuvre achetée, elle s'écoute et se regarde directement sur la plateforme, sur téléphone comme sur ordinateur, sans rien installer et sans téléchargement. Les fichiers restent protégés, ce qui préserve la valeur du travail des créateurs tout en offrant au public une expérience simple et fluide.</p>
+      <p>Chaque acheteur peut écouter un extrait gratuit avant de payer, puis profiter de l'oeuvre complète en illimité dans sa bibliothèque après l'achat.</p>
+      <p>Notre mission est de valoriser la création artistique africaine et de contribuer au développement d'une industrie culturelle numérique durable, où le créateur est justement rémunéré.</p>
+      <div class="box"><b style="color:var(--txt)">Nous contacter</b><p style="margin-top:6px">${contactLigne}</p></div>`,
+    confidentialite: `
+      <h1>Politique de confidentialité</h1>
+      <p class="maj">Comment SankiZik traite et protège vos données personnelles.</p>
+      <h2>1. Responsable du traitement</h2>
+      <p>Le service SankiZik est édité et exploité par ${esc(marchand)}. Nous sommes responsables des traitements de données décrits ci-dessous pour la plateforme SankiZik.</p>
+      <h2>2. Données que nous collectons</h2>
+      <p>Nous collectons uniquement les données nécessaires au fonctionnement du service :</p>
+      <ul>
+        <li>votre adresse e-mail et votre mot de passe, pour créer et sécuriser votre compte ;</li>
+        <li>votre nom d'affichage et votre numéro de téléphone, que vous renseignez vous-même ;</li>
+        <li>l'historique de vos achats et l'accès aux oeuvres que vous avez acquises ;</li>
+        <li>pour un paiement, le numéro et la référence que vous communiquez pour permettre la vérification de la transaction.</li>
+      </ul>
+      <h2>3. Usage de vos données</h2>
+      <p>Vos données servent exclusivement à : gérer votre compte, vous donner accès aux oeuvres achetées, valider vos paiements, et assurer le support. Nous ne vendons jamais vos données personnelles.</p>
+      <h2>4. Hébergement et prestataires techniques</h2>
+      <p>Le service s'appuie sur des prestataires techniques soumis à leurs propres obligations de sécurité : Supabase (base de données et authentification) et Cloudflare (hébergement du site). Les données transitent par ces services dans la seule mesure nécessaire au fonctionnement de la plateforme.</p>
+      <h2>5. Paiements</h2>
+      <p>Les paiements s'effectuent par mobile money (Orange Money, Moov Money, Wave). SankiZik ne stocke jamais votre code secret ni vos identifiants d'opérateur. Seule la référence de transaction que vous fournissez est conservée pour vérifier votre achat.</p>
+      <h2>6. Vos droits</h2>
+      <p>Vous pouvez à tout moment consulter, corriger ou demander la suppression de vos données personnelles, ainsi que la fermeture de votre compte. Pour toute demande, contactez-nous ${contact ? "au " + esc(contact) : "via le site"}.</p>
+      <h2>7. Cookies</h2>
+      <p>SankiZik utilise uniquement les données de session strictement nécessaires pour vous garder connecté. Aucun cookie publicitaire ni traceur tiers de suivi n'est utilisé.</p>`,
+    conditions: `
+      <h1>Conditions d'utilisation</h1>
+      <p class="maj">Les règles d'usage de la plateforme SankiZik.</p>
+      <h2>1. Objet</h2>
+      <p>SankiZik est une plateforme de vente d'oeuvres numériques (musique, vidéos, livres et autres contenus) dont l'écoute et la lecture se font directement en ligne. Ces conditions encadrent l'usage du service par tous les utilisateurs.</p>
+      <h2>2. Compte</h2>
+      <p>La création d'un compte requiert une adresse e-mail valide. Vous êtes responsable de la confidentialité de vos identifiants et de toute activité réalisée depuis votre compte.</p>
+      <h2>3. Achats et accès aux oeuvres</h2>
+      <p>L'achat d'une oeuvre donne un droit d'accès personnel, pour écoute et visionnage sur la plateforme. Cet accès est strictement personnel : il ne peut être revendu, partagé, ni transféré. Les fichiers ne sont pas téléchargeables, afin de protéger les droits des créateurs.</p>
+      <h2>4. Paiement et validation</h2>
+      <p>Les paiements se font par mobile money. Un achat est confirmé après vérification de la transaction. En cas de paiement non retrouvé, l'accès à l'oeuvre n'est pas ouvert et vous pouvez renouveler la démarche.</p>
+      <h2>5. Nature des ventes numériques</h2>
+      <p>Les oeuvres étant des biens numériques donnant un accès immédiat après validation, les ventes sont fermes. En cas de problème technique d'accès à une oeuvre régulièrement payée, contactez le support pour résolution.</p>
+      <h2>6. Obligations des créateurs</h2>
+      <p>Tout artiste, beatmaker, réalisateur ou auteur qui publie une oeuvre sur SankiZik garantit détenir l'ensemble des droits nécessaires à sa commercialisation. La publication d'une oeuvre dont vous ne détenez pas les droits est interdite et engage votre seule responsabilité.</p>
+      <h2>7. Contenus interdits</h2>
+      <p>Sont interdits les contenus illégaux, contrefaits, ou portant atteinte aux droits d'autrui. SankiZik se réserve le droit de retirer toute oeuvre non conforme et de suspendre le compte concerné.</p>
+      <h2>8. Responsabilité</h2>
+      <p>SankiZik agit comme intermédiaire technique entre créateurs et public. La responsabilité du contenu des oeuvres incombe à ceux qui les publient.</p>`,
+    mentions: `
+      <h1>Mentions légales</h1>
+      <p class="maj">Informations sur l'éditeur du service.</p>
+      <h2>Éditeur</h2>
+      <p>Le service SankiZik est édité par ${esc(marchand)}, basé à Bamako, Mali.</p>
+      <p>${contact ? "Contact : " + esc(contact) : "Contact : via le formulaire du site."}</p>
+      <h2>Hébergement</h2>
+      <p>Le site est hébergé par Cloudflare, Inc. La base de données et l'authentification sont assurées par Supabase.</p>
+      <h2>Propriété intellectuelle</h2>
+      <p>La marque SankiZik, son logo et l'ensemble des éléments de la plateforme sont protégés. Les oeuvres proposées à la vente restent la propriété de leurs auteurs et ayants droit respectifs.</p>
+      <h2>Contact</h2>
+      <p>Pour toute question relative au service, à vos données ou à une oeuvre, contactez-nous ${contact ? "au " + esc(contact) : "via le site"}.</p>`
+  };
+  $("#app").innerHTML = `
+    <div class="legal">
+      <div class="tabs-legal">
+        ${onglets.map(o => `<a href="#/legal/${o[0]}" class="${o[0]===page?"on":""}">${o[1]}</a>`).join("")}
+      </div>
+      ${contenu[page] || contenu.apropos}
+    </div>`;
+}
+
+/* ================= ADMIN ================= */
+let adminTab = "validations";
+async function vueAdmin(){
+  if(!estAdmin()){ $("#app").innerHTML = `<div class="empty" style="margin-top:40px"><div class="big">&#128274;</div>Espace réservé à l'administrateur.</div>`; return; }
+  $("#app").innerHTML = `
+    <h2 class="section-t" style="margin-top:26px">&#9881; Administration</h2>
+    <div class="tabs" style="max-width:560px">
+      <button id="at-validations" onclick="adminTab='validations';rendreAdmin()">Paiements</button>
+      <button id="at-oeuvres" onclick="adminTab='oeuvres';rendreAdmin()">Oeuvres</button>
+      <button id="at-utilisateurs" onclick="adminTab='utilisateurs';rendreAdmin()">Comptes</button>
+      <button id="at-parametres" onclick="adminTab='parametres';rendreAdmin()">Réglages</button>
+    </div>
+    <div id="admin-zone"><div class="loading"><span class="spin-ico"></span></div></div>`;
+  rendreAdmin();
+}
+async function rendreAdmin(){
+  $$(".tabs button").forEach(b => b.classList.toggle("on", b.id === "at-" + adminTab));
+  const z = $("#admin-zone");
+  z.innerHTML = `<div class="loading"><span class="spin-ico"></span></div>`;
+  if(adminTab === "validations"){
+    const { data } = await sb.from("sz_achats")
+      .select("*, profil:sz_profils(nom, email, telephone), produit:sz_produits(titre, nom_artiste)")
+      .order("created_at",{ascending:false}).limit(120);
+    const attente = (data||[]).filter(a => a.statut === "en_attente");
+    const autres = (data||[]).filter(a => a.statut !== "en_attente").slice(0, 30);
+    const ligne = a => `
+      <div class="list-item">
+        <div class="li-main">
+          <b>${esc(a.produit ? a.produit.titre : "?")} · ${fcfa(a.montant_fcfa)}</b>
+          <span>${esc(a.profil ? (a.profil.nom || a.profil.email) : "?")} · ${esc(a.moyen)} · réf. ${esc(a.reference)} · ${esc(a.tel_payeur || "")}</span>
+          <span>${new Date(a.created_at).toLocaleString("fr-FR")}</span>
+        </div>
+        ${a.statut === "en_attente"
+          ? `<div class="li-actions">
+              <button class="btn btn-p btn-s" onclick="statuerAchat('${a.id}','valide')">&#10003; Valider</button>
+              <button class="btn btn-danger btn-s" onclick="statuerAchat('${a.id}','rejete')">Rejeter</button>
+            </div>`
+          : `<span class="badge ${a.statut}">${a.statut === "valide" ? "Validé" : "Rejeté"}</span>`}
+      </div>`;
+    z.innerHTML = `
+      <div class="panel"><h3>&#8987; Paiements à vérifier (${attente.length})</h3>
+        ${attente.length ? attente.map(ligne).join("") : `<p class="muted">Aucun paiement en attente. Tout est à jour.</p>`}
+      </div>
+      ${autres.length ? `<div class="panel"><h3>Historique récent</h3>${autres.map(ligne).join("")}</div>` : ""}`;
+  }
+  if(adminTab === "oeuvres"){
+    const { data } = await sb.from("sz_produits").select("*").order("created_at",{ascending:false});
+    z.innerHTML = `<div class="panel"><h3>Toutes les oeuvres (${(data||[]).length})</h3>
+      ${(data||[]).map(p => `
+        <div class="list-item">
+          ${coverUrl(p) ? `<img class="mini-cov" src="${coverUrl(p)}" alt="">` : `<div class="mini-cov"></div>`}
+          <div class="li-main"><b>${esc(p.titre)}</b><span>${esc(p.nom_artiste)} · ${fcfa(p.prix_fcfa)} · ${(p.ventes||0)} ventes</span></div>
+          <span class="badge ${p.en_ligne ? "online":"offline"}">${p.en_ligne ? "En ligne" : "Hors ligne"}</span>
+          <div class="li-actions">
+            <button class="btn btn-g btn-s" onclick="aller('#/produit/${p.id}')">Voir</button>
+            <button class="btn btn-g btn-s" onclick="formModif('${p.id}')">Modifier</button>
+            <button class="btn btn-g btn-s" onclick="basculerLigne('${p.id}', ${!p.en_ligne})">${p.en_ligne ? "Retirer" : "Publier"}</button>
+            <button class="btn btn-danger btn-s" onclick="supprimerOeuvre('${p.id}')">Supprimer</button>
+          </div>
+        </div>`).join("") || `<p class="muted">Aucune oeuvre.</p>`}
+    </div>`;
+  }
+  if(adminTab === "utilisateurs"){
+    const { data } = await sb.from("sz_profils").select("*").order("created_at",{ascending:false}).limit(300);
+    z.innerHTML = `<div class="panel"><h3>Comptes (${(data||[]).length})</h3>
+      <input type="search" id="us" placeholder="Filtrer par nom, e-mail ou téléphone..." style="margin-bottom:12px">
+      <div id="ulist"></div>
+    </div>`;
+    const rendre = q => {
+      const l = (data||[]).filter(u => !q || (u.nom+" "+(u.email||"")+" "+(u.telephone||"")).toLowerCase().includes(q));
+      $("#ulist").innerHTML = l.map(u => `
+        <div class="list-item">
+          <div class="li-main"><b>${esc(u.nom || "Sans nom")}</b><span>${esc(u.email || "")} · ${esc(u.telephone || "")}</span></div>
+          <select onchange="changerRole('${u.id}', this.value)" style="width:auto">
+            <option value="client" ${u.role==="client"?"selected":""}>Mélomane</option>
+            <option value="artiste" ${u.role==="artiste"?"selected":""}>Artiste</option>
+            <option value="admin" ${u.role==="admin"?"selected":""}>Admin</option>
+          </select>
+        </div>`).join("") || `<p class="muted">Aucun compte trouvé.</p>`;
+    };
+    rendre("");
+    $("#us").addEventListener("input", e => rendre(e.target.value.toLowerCase().trim()));
+  }
+  if(adminTab === "parametres"){
+    await chargerConfig();
+    z.innerHTML = `<div class="panel" style="max-width:520px"><h3>Numéros de paiement affichés aux acheteurs</h3>
+      <label>Nom du marchand</label><input id="pc-nom" value="${esc(S.config.nom_marchand || "")}" placeholder="Ex : SankiZik / Hamadoun">
+      <label>Numéro Orange Money</label><input id="pc-orange" value="${esc(S.config.tel_orange || "")}" placeholder="Ex : 70 00 00 00">
+      <label>Numéro Moov Money</label><input id="pc-moov" value="${esc(S.config.tel_moov || "")}" placeholder="Laisser vide si non utilisé">
+      <label>Numéro Wave</label><input id="pc-wave" value="${esc(S.config.tel_wave || "")}" placeholder="Laisser vide si non utilisé">
+      <h3 style="margin-top:26px">Images du site</h3>
+      <p class="muted">Les grandes photos de la page d'accueil. Choisissez des images qui inspirent la réussite : artiste au casque, studio, scène, public... Sans image, une photo par défaut s'affiche.</p>
+      <label>Image principale (haut de l'accueil, format portrait conseillé)</label>
+      <div class="upload-zone" onclick="this.querySelector('input').click()">
+        <input type="file" id="pc-img1" accept="image/*" onchange="this.parentNode.querySelector('span').textContent = this.files[0] ? this.files[0].name : 'Choisir une image'">
+        <span>&#128444; ${S.config.image_accueil ? "Remplacer l'image actuelle" : "Choisir une image"}</span>
+      </div>
+      <label>Image du bandeau artistes (bas de l'accueil, format paysage)</label>
+      <div class="upload-zone" onclick="this.querySelector('input').click()">
+        <input type="file" id="pc-img2" accept="image/*" onchange="this.parentNode.querySelector('span').textContent = this.files[0] ? this.files[0].name : 'Choisir une image'">
+        <span>&#128444; ${S.config.image_artistes ? "Remplacer l'image actuelle" : "Choisir une image"}</span>
+      </div>
+      <div class="prog" id="pc-prog"></div>
+      <button class="btn btn-p" style="margin-top:20px" onclick="majConfig()">Enregistrer</button>
+    </div>`;
+  }
+}
+async function statuerAchat(id, statut){
+  const { error } = await sb.from("sz_achats").update({ statut, valide_at:new Date().toISOString() }).eq("id", id);
+  if(error){ toast("Erreur : " + error.message, "err"); return; }
+  S.chargeCatalogue = false;
+  await chargerProfil(); renderNav();
+  toast(statut === "valide" ? "Paiement validé, oeuvre débloquée pour l'acheteur" : "Paiement rejeté");
+  rendreAdmin();
+}
+async function changerRole(id, role){
+  const { error } = await sb.from("sz_profils").update({ role }).eq("id", id);
+  if(error){ toast("Erreur : " + error.message, "err"); return; }
+  toast("Rôle mis à jour");
+}
+async function majConfig(){
+  const prog = t => { const el = $("#pc-prog"); if(el) el.textContent = t; };
+  const lignes = [
+    { cle:"nom_marchand", valeur:$("#pc-nom").value.trim() },
+    { cle:"tel_orange", valeur:$("#pc-orange").value.trim() },
+    { cle:"tel_moov", valeur:$("#pc-moov").value.trim() },
+    { cle:"tel_wave", valeur:$("#pc-wave").value.trim() }
+  ];
+  try{
+    for(const [inputId, cle, largeur] of [["pc-img1","image_accueil",1100],["pc-img2","image_artistes",1600]]){
+      const inp = $("#" + inputId);
+      const f = inp && inp.files[0];
+      if(!f) continue;
+      prog("Envoi de l'image...");
+      const petit = await compresserImage(f, largeur);
+      const chemin = "site/" + cle + "_" + Date.now() + ".jpg";
+      const { error:eImg } = await sb.storage.from("sz-covers").upload(chemin, petit, { contentType:"image/jpeg" });
+      if(eImg) throw new Error("Image : " + eImg.message);
+      const ancien = S.config[cle];
+      lignes.push({ cle, valeur:chemin });
+      if(ancien && ancien !== chemin) sb.storage.from("sz-covers").remove([ancien]);
+    }
+    prog("");
+    const { error } = await sb.from("sz_config").upsert(lignes);
+    if(error) throw error;
+    await chargerConfig();
+    toast("Réglages enregistrés");
+    rendreAdmin();
+  }catch(e){
+    prog("");
+    toast("Erreur : " + (e.message || e), "err");
+  }
+}
+
+/* ================= DEMARRAGE ================= */
+async function boot(){
+  const an = document.getElementById("annee"); if(an) an.textContent = new Date().getFullYear();
+  const { data:{ session } } = await sb.auth.getSession();
+  S.session = session;
+  await Promise.all([chargerProfil(), chargerMesAchats()]);
+  renderNav();
+  router();
+  sb.auth.onAuthStateChange(async (evt, sess) => {
+    const avait = !!S.session;
+    S.session = sess;
+    if(evt === "SIGNED_IN" || evt === "SIGNED_OUT" || evt === "USER_UPDATED"){
+      await Promise.all([chargerProfil(), chargerMesAchats()]);
+      S.urls = {};
+      renderNav();
+      if(evt === "SIGNED_IN" && !avait) router();
+      if(evt === "SIGNED_OUT") router();
+    }
+  });
+}
+boot();
+</script>
+</body>
+</html>
