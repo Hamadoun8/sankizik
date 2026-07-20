@@ -64,7 +64,10 @@ export async function onRequestPost({ request, env }) {
     });
     const pd = await rPd.json();
     if (pd.response_code !== "00" || !pd.token) {
-      return new Response(JSON.stringify({ error: "Paiement indisponible pour le moment. Reessayez." }), { status: 502, headers: cors });
+      return new Response(JSON.stringify({
+        error: "Paiement indisponible pour le moment. Reessayez.",
+        debug: (pd && pd.response_text) ? String(pd.response_text) : "reponse vide de PayDunya"
+      }), { status: 502, headers: cors });
     }
 
     // 4) Enregistrer l'achat en attente, avec le token PayDunya
